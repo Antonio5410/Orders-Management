@@ -98,4 +98,27 @@ public class OrderBLL {
         }
         return maxOrderNumber + 1;
     }
+
+    public static Bill generateBillForOrder(int orderNumber) throws Exception {
+        Order order = OrderBLL.findById(orderNumber);
+        if (order == null) {
+            throw new Exception("Order not found.");
+        }
+
+        // Retrieve product details for each order item
+        Product product = ProductBLL.findById(order.getIDProduct());
+        if (product == null) {
+            throw new Exception("Product not found.");
+        }
+
+        List<OrderItem> orderItems = List.of(new OrderItem(
+                product.getIDProduct(),
+                product.getProdName(),
+                product.getProdPrice(),
+                order.getCantitate()
+        ));
+
+        return new Bill(orderNumber, order.getIDClient(), orderItems);
+    }
+
 }
